@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobFinder Maroc</title>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --bg: #ffffff;
+      --bg-alt: #f9fafb;
+      --border: #e5e7eb;
+      --radius: 10px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1150px; margin: 0 auto; padding: 0 20px; }
+
+    .header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-content {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 16px 20px;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--primary); }
+    .nav { display: flex; gap: 20px; align-items: center; }
+    .nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: color 0.2s; }
+    .nav a:hover { color: var(--primary); }
+    .btn-primary { background: var(--primary); color: white !important; padding: 8px 18px; border-radius: var(--radius); }
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .hero { background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 70px 0; text-align: center; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
+    .hero p { color: var(--text-light); margin-bottom: 30px; font-size: 1.1rem; }
+
+    .search-bar {
+      display: flex; gap: 10px; background: white;
+      padding: 12px; border-radius: var(--radius);
+      box-shadow: var(--shadow); max-width: 900px;
+      margin: 0 auto; flex-wrap: wrap;
+    }
+    .search-bar input, .search-bar select {
+      flex: 1; min-width: 150px; padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.95rem; outline: none;
+    }
+    .search-bar input:focus, .search-bar select:focus { border-color: var(--primary); }
+    .search-bar button {
+      padding: 12px 28px; background: var(--primary); color: white;
+      border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+    .search-bar button:hover { background: var(--primary-dark); }
+
+    .jobs-section { padding: 50px 0; background: var(--bg-alt); }
+    .jobs-section h2 { margin-bottom: 25px; font-size: 1.6rem; }
+    .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    .job-card {
+      background: white; border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+    }
+    .job-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .job-card h3 { font-size: 1.15rem; margin-bottom: 6px; }
+    .job-card .company { color: var(--text-light); font-size: 0.9rem; margin-bottom: 12px; }
+    .job-card .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+    .tag {
+      background: #eff6ff; color: var(--primary);
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 500;
+    }
+    .tag.city { background: #f0fdf4; color: #16a34a; }
+
+    .footer { background: var(--text); color: white; padding: 25px 0; text-align: center; font-size: 0.9rem; }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.8rem; }
+      .search-bar { flex-direction: column; }
+      .search-bar input, .search-bar select, .search-bar button { width: 100%; }
+      .nav { gap: 12px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <div class="container header-content">
+      <a href="index.html" class="logo">Job<span>Finder</span> 🇲🇦</a>
+      <nav class="nav">
+        <a href="index.html">Accueil</a>
+        <a href="login.html">Connexion</a>
+        <a href="register.html" class="btn-primary">Inscription</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="container">
+      <h1>Trouve ton job au Maroc</h1>
+      <p>Des milliers d'offres d'emploi et de stages t'attendent</p>
+
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Mot-clé (ex: développeur)">
+        <select id="cityFilter">
+          <option value="">Toutes les villes</option>
+          <option value="Casablanca">Casablanca</option>
+          <option value="Rabat">Rabat</option>
+          <option value="Fès">Fès</option>
+          <option value="Marrakech">Marrakech</option>
+          <option value="Tanger">Tanger</option>
+        </select>
+        <select id="categoryFilter">
+          <option value="">Tous les domaines</option>
+          <option value="IT">IT</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Finance">Finance</option>
+        </select>
+        <button id="searchBtn">Rechercher</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Jobs ===== -->
+  <section class="jobs-section">
+    <div class="container">
+      <h2>Offres récentes</h2>
+      <div id="jobsList" class="jobs-grid"></div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2025 JobFinder Maroc — Projet d'apprentissage</p>
+    </div>
+  </footer>
+
+  <!-- ===== JavaScript ===== -->
+  <script>
+    // ===== URL de l'API =====
+    const API_URL = "http://localhost:5000/api/jobs";
+
+    // ===== Jobs (seront chargés depuis l'API) =====
+    let jobs = [];
+
+    // ===== Références DOM =====
+    const jobsList = document.getElementById("jobsList");
+    const searchInput = document.getElementById("searchInput");
+    const cityFilter = document.getElementById("cityFilter");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const searchBtn = document.getElementById("searchBtn");
+
+    // ===== Récupérer les jobs depuis l'API =====
+    async function fetchJobs() {
+      try {
+        console.log("🔄 Chargement des jobs...");
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+          throw new Error("Erreur HTTP: " + response.status);
+        }
+
+        jobs = await response.json();
+        displayJobs(jobs);
+        console.log(`✅ ${jobs.length} jobs chargés depuis l'API`);
+      } catch (error) {
+        console.error("❌ Erreur:", error);
+        jobsList.innerHTML = `
+          <p style="grid-column:1/-1;text-align:center;color:#dc2626;padding:20px;">
+            ⚠️ Impossible de charger les offres.<br>
+            Vérifie que le serveur est démarré (<code>node server.js</code>).
+          </p>
+        `;
+      }
+    }
+
+    // ===== Créer une carte job =====
+    function createJobCard(job) {
+      return `
+        <div class="job-card" onclick="window.location.href='job.html?id=${job._id}'">
+          <h3>${job.title}</h3>
+          <div class="company">${job.company} · ${job.type}</div>
+          <p>${job.description}</p>
+          <div class="tags">
+            <span class="tag city">📍 ${job.city}</span>
+            <span class="tag">${job.category}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // ===== Afficher les jobs =====
+    function displayJobs(list) {
+      if (list.length === 0) {
+        jobsList.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#6b7280;">Aucune offre trouvée 😕</p>`;
+        return;
+      }
+      jobsList.innerHTML = list.map(createJobCard).join("");
+    }
+
+    // ===== Filtrer =====
+    function filterJobs() {
+      const keyword = searchInput.value.toLowerCase().trim();
+      const city = cityFilter.value;
+      const category = categoryFilter.value;
+
+      const filtered = jobs.filter(job => {
+        const matchKeyword =
+          job.title.toLowerCase().includes(keyword) ||
+          job.company.toLowerCase().includes(keyword) ||
+          job.description.toLowerCase().includes(keyword);
+        const matchCity = !city || job.city === city;
+        const matchCategory = !category || job.category === category;
+        return matchKeyword && matchCity && matchCategory;
+      });
+
+      displayJobs(filtered);
+    }
+
+    // ===== Événements =====
+    searchBtn.addEventListener("click", filterJobs);
+    searchInput.addEventListener("input", filterJobs);
+    cityFilter.addEventListener("change", filterJobs);
+    categoryFilter.addEventListener("change", filterJobs);
+
+    // ===== Init =====
+    fetchJobs();
+  </script>
+</body>
+</html>
