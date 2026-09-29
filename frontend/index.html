@@ -29,6 +29,7 @@
 
     .container { max-width: 1150px; margin: 0 auto; padding: 0 20px; }
 
+    /* Header */
     .header {
       background: white;
       border-bottom: 1px solid var(--border);
@@ -43,13 +44,15 @@
     .nav { display: flex; gap: 20px; align-items: center; }
     .nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: color 0.2s; }
     .nav a:hover { color: var(--primary); }
-    .btn-primary { background: var(--primary); color: white !important; padding: 8px 18px; border-radius: var(--radius); }
+    .btn-primary { background: var(--primary); color: white !important; padding: 8px 18px; border-radius: var(--radius); cursor: pointer; border: none; }
     .btn-primary:hover { background: var(--primary-dark); }
 
+    /* Hero */
     .hero { background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 70px 0; text-align: center; }
     .hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
     .hero p { color: var(--text-light); margin-bottom: 30px; font-size: 1.1rem; }
 
+    /* Search bar */
     .search-bar {
       display: flex; gap: 10px; background: white;
       padding: 12px; border-radius: var(--radius);
@@ -68,6 +71,7 @@
     }
     .search-bar button:hover { background: var(--primary-dark); }
 
+    /* Jobs */
     .jobs-section { padding: 50px 0; background: var(--bg-alt); }
     .jobs-section h2 { margin-bottom: 25px; font-size: 1.6rem; }
     .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -88,7 +92,71 @@
     }
     .tag.city { background: #f0fdf4; color: #16a34a; }
 
+    /* Footer */
     .footer { background: var(--text); color: white; padding: 25px 0; text-align: center; font-size: 0.9rem; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+      z-index: 1000; justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white; border-radius: var(--radius);
+      padding: 30px; max-width: 400px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .modal h2 { margin-bottom: 20px; font-size: 1.5rem; text-align: center; }
+    .modal-close {
+      position: absolute; top: 12px; right: 12px;
+      background: none; border: none; font-size: 1.5rem;
+      cursor: pointer; color: var(--text-light); line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal .form-group { margin-bottom: 15px; }
+    .modal label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
+    .modal input {
+      width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.95rem; outline: none;
+    }
+    .modal input:focus { border-color: var(--primary); }
+    .modal .btn-submit {
+      width: 100%; padding: 12px; background: var(--primary);
+      color: white; border: none; border-radius: 8px;
+      font-weight: 600; cursor: pointer; font-size: 1rem;
+      margin-top: 10px;
+    }
+    .modal .btn-submit:hover { background: var(--primary-dark); }
+    .modal .switch {
+      text-align: center; margin-top: 15px;
+      font-size: 0.9rem; color: var(--text-light);
+    }
+    .modal .switch a {
+      color: var(--primary); text-decoration: none;
+      font-weight: 500; cursor: pointer;
+    }
+    .modal .switch a:hover { text-decoration: underline; }
+    .modal .message {
+      padding: 10px; border-radius: 8px; margin-bottom: 15px;
+      font-size: 0.9rem; display: none;
+    }
+    .modal .message.error { background: #fee2e2; color: #dc2626; display: block; }
+    .modal .message.success { background: #dcfce7; color: #16a34a; display: block; }
+
+    /* User menu */
+    .user-menu {
+      display: flex; gap: 15px; align-items: center;
+    }
+    .user-menu .welcome { font-weight: 500; color: var(--text); }
+    .user-menu .logout {
+      background: #fee2e2; color: #dc2626; border: none;
+      padding: 8px 16px; border-radius: 8px; cursor: pointer;
+      font-weight: 500;
+    }
+    .user-menu .logout:hover { background: #fecaca; }
 
     @media (max-width: 640px) {
       .hero h1 { font-size: 1.8rem; }
@@ -104,10 +172,10 @@
   <header class="header">
     <div class="container header-content">
       <a href="index.html" class="logo">Job<span>Finder</span> 🇲🇦</a>
-      <nav class="nav">
+      <nav class="nav" id="mainNav">
         <a href="index.html">Accueil</a>
-        <a href="login.html">Connexion</a>
-        <a href="register.html" class="btn-primary">Inscription</a>
+        <a onclick="openModal('login')">Connexion</a>
+        <a onclick="openModal('register')" class="btn-primary">Inscription</a>
       </nav>
     </div>
   </header>
@@ -154,13 +222,41 @@
     </div>
   </footer>
 
+  <!-- ===== Modal Login / Register ===== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2 id="modalTitle">Connexion</h2>
+      <div class="message" id="modalMessage"></div>
+      <form id="modalForm" onsubmit="handleSubmit(event)">
+        <div class="form-group" id="nameGroup" style="display:none;">
+          <label for="nameInput">Nom complet</label>
+          <input type="text" id="nameInput" placeholder="Ton nom">
+        </div>
+        <div class="form-group">
+          <label for="emailInput">Email</label>
+          <input type="email" id="emailInput" placeholder="ton@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="passwordInput">Mot de passe</label>
+          <input type="password" id="passwordInput" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit" id="modalSubmit">Se connecter</button>
+      </form>
+      <div class="switch" id="modalSwitch">
+        Pas de compte ? <a onclick="switchModal('register')">S'inscrire</a>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== JavaScript ===== -->
   <script>
-    // ===== URL de l'API =====
-    const API_URL = "http://localhost:5000/api/jobs";
-
-    // ===== Jobs (seront chargés depuis l'API) =====
+    // ===== Configuration API =====
+   const API_URL = "http://localhost:5000/api/jobs";
+const AUTH_URL = "http://localhost:5000/api/auth";
+    // ===== État global =====
     let jobs = [];
+    let currentUser = null;
 
     // ===== Références DOM =====
     const jobsList = document.getElementById("jobsList");
@@ -168,17 +264,25 @@
     const cityFilter = document.getElementById("cityFilter");
     const categoryFilter = document.getElementById("categoryFilter");
     const searchBtn = document.getElementById("searchBtn");
+    const mainNav = document.getElementById("mainNav");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalForm = document.getElementById("modalForm");
+    const modalSubmit = document.getElementById("modalSubmit");
+    const modalSwitch = document.getElementById("modalSwitch");
+    const modalMessage = document.getElementById("modalMessage");
+    const nameGroup = document.getElementById("nameGroup");
+    const nameInput = document.getElementById("nameInput");
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
 
-    // ===== Récupérer les jobs depuis l'API =====
+    let currentModal = 'login';
+
+    // ===== API: Charger les jobs =====
     async function fetchJobs() {
       try {
-        console.log("🔄 Chargement des jobs...");
         const response = await fetch(API_URL);
-
-        if (!response.ok) {
-          throw new Error("Erreur HTTP: " + response.status);
-        }
-
+        if (!response.ok) throw new Error("Erreur HTTP: " + response.status);
         jobs = await response.json();
         displayJobs(jobs);
         console.log(`✅ ${jobs.length} jobs chargés depuis l'API`);
@@ -187,16 +291,16 @@
         jobsList.innerHTML = `
           <p style="grid-column:1/-1;text-align:center;color:#dc2626;padding:20px;">
             ⚠️ Impossible de charger les offres.<br>
-            Vérifie que le serveur est démarré (<code>node server.js</code>).
+            Vérifie que le serveur est démarré.
           </p>
         `;
       }
     }
 
-    // ===== Créer une carte job =====
+    // ===== Carte job =====
     function createJobCard(job) {
       return `
-        <div class="job-card" onclick="window.location.href='job.html?id=${job._id}'">
+        <div class="job-card">
           <h3>${job.title}</h3>
           <div class="company">${job.company} · ${job.type}</div>
           <p>${job.description}</p>
@@ -236,13 +340,140 @@
       displayJobs(filtered);
     }
 
+    // ===== Modal: Ouvrir =====
+    function openModal(type) {
+      currentModal = type;
+      modalMessage.className = "message";
+      modalMessage.textContent = "";
+      modalForm.reset();
+
+      if (type === 'login') {
+        modalTitle.textContent = "Connexion";
+        modalSubmit.textContent = "Se connecter";
+        nameGroup.style.display = "none";
+        modalSwitch.innerHTML = `Pas de compte ? <a onclick="switchModal('register')">S'inscrire</a>`;
+      } else {
+        modalTitle.textContent = "Inscription";
+        modalSubmit.textContent = "S'inscrire";
+        nameGroup.style.display = "block";
+        modalSwitch.innerHTML = `Déjà un compte ? <a onclick="switchModal('login')">Se connecter</a>`;
+      }
+
+      modalOverlay.classList.add("active");
+    }
+
+    // ===== Modal: Fermer =====
+    function closeModal() {
+      modalOverlay.classList.remove("active");
+    }
+
+    // ===== Modal: Switcher =====
+    function switchModal(type) {
+      openModal(type);
+    }
+
+    // ===== Modal: Submit =====
+    async function handleSubmit(e) {
+      e.preventDefault();
+      modalMessage.className = "message";
+      modalMessage.textContent = "";
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const name = nameInput.value.trim();
+
+      const url = currentModal === 'login'
+        ? `${AUTH_URL}/login`
+        : `${AUTH_URL}/register`;
+
+      const body = currentModal === 'login'
+        ? { email, password }
+        : { name, email, password };
+
+      try {
+        modalSubmit.disabled = true;
+        modalSubmit.textContent = "...";
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Erreur");
+        }
+
+        // Sauvegarder le token
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        currentUser = data.user;
+
+        modalMessage.className = "message success";
+        modalMessage.textContent = currentModal === 'login'
+          ? "✅ Connexion réussie !"
+          : "✅ Inscription réussie !";
+
+        setTimeout(() => {
+          closeModal();
+          updateHeader();
+        }, 1000);
+      } catch (error) {
+        modalMessage.className = "message error";
+        modalMessage.textContent = "❌ " + error.message;
+      } finally {
+        modalSubmit.disabled = false;
+        modalSubmit.textContent = currentModal === 'login' ? "Se connecter" : "S'inscrire";
+      }
+    }
+
+    // ===== Header: Mettre à jour selon login =====
+    function updateHeader() {
+      const token = localStorage.getItem("token");
+      const userStr = localStorage.getItem("user");
+
+      if (token && userStr) {
+        const user = JSON.parse(userStr);
+        currentUser = user;
+        mainNav.innerHTML = `
+          <a href="index.html">Accueil</a>
+          <span class="welcome">👋 ${user.name || user.email}</span>
+          <button class="logout" onclick="logout()">Déconnexion</button>
+        `;
+      } else {
+        currentUser = null;
+        mainNav.innerHTML = `
+          <a href="index.html">Accueil</a>
+          <a onclick="openModal('login')">Connexion</a>
+          <a onclick="openModal('register')" class="btn-primary">Inscription</a>
+        `;
+      }
+    }
+
+    // ===== Logout =====
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      currentUser = null;
+      updateHeader();
+      alert("Déconnexion réussie ✅");
+    }
+
     // ===== Événements =====
     searchBtn.addEventListener("click", filterJobs);
     searchInput.addEventListener("input", filterJobs);
     cityFilter.addEventListener("change", filterJobs);
     categoryFilter.addEventListener("change", filterJobs);
 
+    // Fermer modal en cliquant sur l'overlay
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+
     // ===== Init =====
+    updateHeader();
     fetchJobs();
   </script>
 </body>
